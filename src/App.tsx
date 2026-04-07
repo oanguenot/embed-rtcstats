@@ -9,6 +9,7 @@ function normalizeUrl(raw: string): string {
 }
 
 export default function App() {
+  const assetBaseUrl = import.meta.env.BASE_URL
   const [inputValue, setInputValue] = useState('')
   const [iframeSrc, setIframeSrc] = useState<string | null>(null)
   /** Bumps on every Load so the iframe remounts even when `src` is unchanged (browser would not reload otherwise). */
@@ -24,7 +25,11 @@ export default function App() {
   return (
     <div className="app">
       <header className="toolbar">
-        <img src="/icon.png" alt="rtcStats icon" className="toolbar-icon" />
+        <img
+          src={`${assetBaseUrl}icon.png`}
+          alt="rtcStats icon"
+          className="toolbar-icon"
+        />
         <label className="url-field">
           <span className="sr-only">URL to embed</span>
           <input
@@ -54,7 +59,7 @@ export default function App() {
         ) : (
           <section className="placeholder">
             <img
-              src="/rtcStats-logo.png"
+              src={`${assetBaseUrl}rtcStats-logo.png`}
               alt="rtcStats logo"
               className="placeholder-logo"
             />
