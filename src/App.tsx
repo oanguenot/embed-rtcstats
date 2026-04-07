@@ -24,6 +24,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="toolbar">
+        <img src="/icon.png" alt="rtcStats icon" className="toolbar-icon" />
         <label className="url-field">
           <span className="sr-only">URL to embed</span>
           <input
@@ -41,6 +42,7 @@ export default function App() {
           Load
         </button>
       </header>
+      <div className="toolbar-separator" />
       <main className="frame-wrap">
         {iframeSrc ? (
           <iframe
@@ -50,7 +52,17 @@ export default function App() {
             className="embed-frame"
           />
         ) : (
-          <p className="placeholder">Enter a URL and click Load to preview it here.</p>
+          <section className="placeholder">
+            <img
+              src="/rtcStats-logo.png"
+              alt="rtcStats logo"
+              className="placeholder-logo"
+            />
+            <p className="placeholder-subtitle">
+              Copy/Paste an URL to an embedded session and click Load to display
+              it
+            </p>
+          </section>
         )}
       </main>
     </div>
