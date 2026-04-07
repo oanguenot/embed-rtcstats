@@ -11,10 +11,14 @@ function normalizeUrl(raw: string): string {
 export default function App() {
   const [inputValue, setInputValue] = useState('')
   const [iframeSrc, setIframeSrc] = useState<string | null>(null)
+  /** Bumps on every Load so the iframe remounts even when `src` is unchanged (browser would not reload otherwise). */
+  const [frameKey, setFrameKey] = useState(0)
 
   const loadUrl = () => {
     const url = normalizeUrl(inputValue)
+    setFrameKey((k) => k + 1)
     setIframeSrc(url || null)
+    console.log('[embed-rtcstats] Load', { url: url || null, frameKey: frameKey + 1 })
   }
 
   return (
@@ -40,6 +44,7 @@ export default function App() {
       <main className="frame-wrap">
         {iframeSrc ? (
           <iframe
+            key={frameKey}
             title="Embedded page"
             src={iframeSrc}
             className="embed-frame"
