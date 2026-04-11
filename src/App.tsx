@@ -1,5 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
+
+type Session = {
+  title: string
+  url: string
+}
 
 function normalizeUrl(raw: string): string {
   const trimmed = raw.trim()
@@ -10,66 +15,119 @@ function normalizeUrl(raw: string): string {
 
 export default function App() {
   const assetBaseUrl = import.meta.env.BASE_URL
-  const [inputValue, setInputValue] = useState('')
+  const [sessions, setSessions] = useState<Session[]>([])
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [iframeSrc, setIframeSrc] = useState<string | null>(null)
-  /** Bumps on every Load so the iframe remounts even when `src` is unchanged (browser would not reload otherwise). */
+  const [activeTitle, setActiveTitle] = useState<string | null>(null)
+  /** Bumps on every navigation so the iframe remounts even when `src` is unchanged. */
   const [frameKey, setFrameKey] = useState(0)
 
-  const loadUrl = () => {
-    const url = normalizeUrl(inputValue)
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const res = await fetch(`${assetBaseUrl}sessions.json`)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const data = (await res.json()) as { sessions?: Session[] }
+        const list = Array.isArray(data.sessions) ? data.sessions : []
+        if (!cancelled) {
+          setSessions(list)
+          setLoadError(null)
+        }
+      } catch (e) {
+        if (!cancelled) {
+          setSessions([])
+          setLoadError(e instanceof Error ? e.message : 'Failed to load sessions')
+        }
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [assetBaseUrl])
+
+  const selectSession = (session: Session) => {
+    const url = normalizeUrl(session.url)
+    setActiveTitle(session.title)
     setFrameKey((k) => k + 1)
     setIframeSrc(url || null)
-    console.log('[embed-rtcstats] Load', { url: url || null, frameKey: frameKey + 1 })
+    console.log('[embed-rtcstats] Session', { title: session.title, url: url || null })
   }
 
   return (
     <div className="app">
-      <header className="toolbar">
-        <img
-          src={`${assetBaseUrl}icon.png`}
-          alt="rtcStats icon"
-          className="toolbar-icon"
-        />
-        <label className="url-field">
-          <span className="sr-only">URL to embed</span>
-          <input
-            type="url"
-            name="url"
-            placeholder="https://example.com"
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') loadUrl()
-            }}
-          />
-        </label>
-        <button type="button" onClick={loadUrl}>
-          Load
-        </button>
+      <header className="host-header">
+        <div className="host-header-brand">
+          <div className="host-header-logo" aria-hidden="true">
+            VT
+          </div>
+          <div className="host-header-text">
+            <h1 className="host-header-title">VertexTel Solutions</h1>
+            <p className="host-header-tagline">Operations console</p>
+          </div>
+        </div>
       </header>
-      <div className="toolbar-separator" />
-      <main className="frame-wrap">
-        {iframeSrc ? (
-          <iframe
-            key={frameKey}
-            title="Embedded page"
-            src={iframeSrc}
-            className="embed-frame"
-          />
-        ) : (
-          <section className="placeholder">
+      <div className="main-layout">
+        <aside className="session-sidebar" aria-label="Sessions">
+          <nav className="sidebar-menu" aria-label="Call Analysis">
+            <span className="sidebar-menu-title">
+              Call Analysis 
+            </span>
             <img
-              src={`${assetBaseUrl}rtcStats-logo.png`}
-              alt="rtcStats logo"
-              className="placeholder-logo"
+              src={`${assetBaseUrl}icon.png`}
+              alt=""
+              className="sidebar-menu-logo"
+              width={48}
+              height={48}
             />
-            <p className="placeholder-subtitle">
-              Copy/Paste an URL to an embedded session and click Load to display
-              it
+          </nav>
+          {loadError && (
+            <p className="session-sidebar-error" role="alert">
+              Could not load sessions: {loadError}
             </p>
-          </section>
-        )}
-      </main>
+          )}
+          <ul className="session-list">
+            {sessions.map((session) => (
+              <li key={`${session.title}-${session.url}`}>
+                <button
+                  type="button"
+                  className={
+                    session.title === activeTitle
+                      ? 'session-item session-item--active'
+                      : 'session-item'
+                  }
+                  onClick={() => selectSession(session)}
+                >
+                  {session.title}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
+        <main className="viewer-main">
+          <div className="frame-wrap">
+            {iframeSrc ? (
+              <iframe
+                key={frameKey}
+                title={activeTitle ? `Embedded: ${activeTitle}` : 'Embedded page'}
+                src={iframeSrc}
+                className="embed-frame"
+              />
+            ) : (
+              <section className="placeholder">
+                <img
+                  src={`${assetBaseUrl}rtcStats-logo.png`}
+                  alt="rtcStats logo"
+                  className="placeholder-logo"
+                />
+                <p className="placeholder-subtitle">
+                  Select a session on the left to load it in the viewer.
+                </p>
+              </section>
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

@@ -7,85 +7,190 @@
   background: #ffffff;
 }
 
-.toolbar {
+.host-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px 16px;
+  background: #0f172a;
+  text-align: left;
+  border-bottom: 1px solid #1e293b;
+}
+
+.host-header-brand {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
-  padding: 8px;
-  background: #efefef;
-  text-align: left;
-}
-
-.toolbar-icon {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  flex: 0 0 auto;
-}
-
-.toolbar-separator {
-  height: 1px;
-  background: #d0d0d0;
-}
-
-.url-field {
-  flex: 1 1 200px;
   min-width: 0;
 }
 
-.url-field input {
+.host-header-logo {
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #f8fafc;
+  background: linear-gradient(145deg, #1d4ed8 0%, #1e3a8a 100%);
+  border-radius: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.host-header-text {
+  min-width: 0;
+}
+
+.host-header-title {
+  margin: 0;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+.host-header-tagline {
+  margin: 2px 0 0;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #94a3b8;
+  line-height: 1.2;
+}
+
+.host-header-separator {
+  height: 0;
+  flex: 0 0 auto;
+}
+
+.main-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.session-sidebar {
+  flex: 0 0 min(280px, 38vw);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #d0d0d0;
+  background: #ececec;
+  overflow: hidden;
+}
+
+.sidebar-menu {
+  flex: 0 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  min-height: 72px;
+  padding: 14px 14px;
+  border-bottom: 1px solid #d0d0d0;
+  background: #e4e4e4;
+  box-sizing: border-box;
+}
+
+.sidebar-menu-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.35;
+}
+
+.sidebar-menu-link {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.sidebar-menu-link:hover {
+  text-decoration: underline;
+}
+
+.sidebar-menu-logo {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.session-sidebar-error {
+  margin: 0;
+  padding: 10px 12px;
+  font-size: 0.875rem;
+  color: #b91c1c;
+  background: #fef2f2;
+  border-bottom: 1px solid #fecaca;
+}
+
+@media (prefers-color-scheme: dark) {
+  .session-sidebar-error {
+    color: #fca5a5;
+    background: #450a0a;
+    border-bottom-color: #7f1d1d;
+  }
+}
+
+.session-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  overflow: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+.session-item {
+  display: block;
   width: 100%;
   box-sizing: border-box;
+  margin: 0;
   padding: 10px 12px;
   font: inherit;
-  color: #3a3a3a;
+  text-align: left;
+  color: #374151;
   background: #ffffff;
-  border: 0;
-  border-radius: 6px;
-  caret-color: #1f2937;
-  cursor: text;
-}
-
-.url-field input:focus {
-  outline: none;
-  box-shadow: inset 0 0 0 1px #cbd5e1;
-}
-
-.url-field input::placeholder {
-  color: #8a8a8a;
-}
-
-.url-field input::selection {
-  color: #0f172a;
-  background: #bfdbfe;
-}
-
-.url-field input::-moz-selection {
-  color: #0f172a;
-  background: #bfdbfe;
-}
-
-.toolbar button {
-  flex: 0 0 auto;
-  font: inherit;
-  padding: 10px 20px;
+  border: 1px solid #e5e7eb;
   border-radius: 6px;
   cursor: pointer;
-  color: #ffffff;
-  background: #2563eb;
-  border: 1px solid #1d4ed8;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 
-.toolbar button:hover {
-  background: #1d4ed8;
-  border-color: #1e40af;
+.session-item:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
 }
 
-.toolbar button:focus-visible {
+.session-item:focus-visible {
   outline: 2px solid #93c5fd;
   outline-offset: 2px;
+}
+
+.session-item--active {
+  color: #1e3a8a;
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.session-list li + li {
+  margin-top: 6px;
+}
+
+.viewer-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .frame-wrap {
@@ -94,7 +199,10 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  background: #ffffff;
+  margin: 12px;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
 }
 
 .embed-frame {
@@ -117,6 +225,7 @@
   justify-content: center;
   gap: 12px;
   flex: 1;
+  min-height: min(360px, 50vh);
 }
 
 .placeholder-logo {
